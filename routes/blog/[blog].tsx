@@ -3,31 +3,32 @@ import { h, Fragment } from "preact";
 import { tw } from "@twind";
 
 import { Handlers, PageProps } from "$fresh/server.ts";
-import Heading from "../components/heading.tsx";
-import { Marked } from "https://deno.land/x/markdown@v2.0.0/mod.ts";
 import { Head } from "$fresh/runtime.ts";
+import Heading from "../../components/heading.tsx";
+import { Marked } from "https://deno.land/x/markdown@v2.0.0/mod.ts";
 
 export const handler: Handlers = {
   async GET(req, ctx) {
-    const entries = [];
+    const blogSlug = ctx.params.blog;
+    
+    // const entries = [];
     try {
-      for await (const dirEntry of Deno.readDir("./static/blog")) {
-        console.log(dirEntry.name);
-        const decoder = new TextDecoder("utf-8");
-        const data = await Deno.readFile(`./static/blog/${dirEntry.name}`);
-        const text = decoder.decode(data);
 
-        entries.push({
-          slug: dirEntry.name.split(".")[0],
-          title: text.split("\n")[0].split("#")[1],
-          content: text.split("\n").slice(1).join(" "),
-        });
-      }
-
-      const resp = await ctx.render(entries);
+      const decoder = new TextDecoder("utf-8");
+      const data = await Deno.readFile(`./static/blog/${blogSlug}.md`);
+      const text = decoder.decode(data);
+      const html = Marked.parse(text);
+      const resp = await ctx.render(html.content);
       return resp;
     } catch (err) {
       console.error(err);
+      if(err.message.includes("No such file")) {
+        
+        return new Response("Not Found", {
+          status: 404,
+          headers: { "content-type": "text/plain" },
+        });
+      }
       return new Response("Internal Server Error", {
         status: 500,
         headers: { "content-type": "text/plain" },
@@ -47,7 +48,9 @@ export default function Home({ data }: PageProps) {
       </Head>
       <Heading/>
       <div class={tw`p-4 mx-auto max-w-screen-md`}>
-        <p>{JSON.stringify(data)}</p>
+        <div dangerouslySetInnerHTML={{
+          __html: data
+        }}></div>
       </div>
     </Fragment>
   );

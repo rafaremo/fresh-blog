@@ -7,23 +7,26 @@
 import { InnerRenderFunction, RenderContext, start } from "$fresh/server.ts";
 import manifest from "./fresh.gen.ts";
 
-import { config, setup } from "@twind";
+import { config, setup, apply } from "@twind";
 import { virtualSheet } from "twind/sheets";
 
 const sheet = virtualSheet();
 sheet.reset();
-setup({ 
+setup({
   ...config,
   sheet,
-  preflight: (preflight, { theme }) => ({
+  preflight: (preflight, ctx) => ({
     ...preflight,
-    h1: {
-      fontWeight: "bold",
-      fontSize: "2.25rem"
+    '@import': `url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;1,400&display=swap')`,
+    body: {
+      
+      fontFamily: `"Open Sans", sans-serif`,
+      fontSize: "16px",
     },
+    h1: apply`text(gray-800 uppercase)`,
     a: {
       color: "#0070f3"
-    }
+    },
   })
 });
 
