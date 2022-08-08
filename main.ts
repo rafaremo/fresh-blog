@@ -19,11 +19,12 @@ setup({
     ...preflight,
     '@import': `url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;1,400&display=swap')`,
     body: {
-      
       fontFamily: `"Open Sans", sans-serif`,
       fontSize: "16px",
+      fontWeight: "300"
     },
     h1: apply`text(gray-800 uppercase)`,
+    p: apply`font-light`,
     a: {
       color: "#0070f3"
     },

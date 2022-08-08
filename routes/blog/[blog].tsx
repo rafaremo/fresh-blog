@@ -46,7 +46,7 @@ export default function Home({ data }: PageProps) {
         <meta name="description" content="Rafael González's personal blog" />
         <link rel="stylesheet" href="/index.css" />
       </Head>
-      <Heading/>
+      <Heading homePage={false}/>
       <div class={tw`p-4 mx-auto max-w-screen-md`}>
         <div dangerouslySetInnerHTML={{
           __html: data
